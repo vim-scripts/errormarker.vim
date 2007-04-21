@@ -1,0 +1,5 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1861
+
+Hooks the make quickfix command and converts all compiler errors into signs that are placed next to the line with the error. Additionally, lines with errors are highlighted. Hover with your mouse over such a line to get the error message in a tooltip (only gui), or press \cc. The error markers will be updated on every call to :make.
+
+A screenshot of doxygen in action with a lot of errors can be found at http://mh21.piware.de/vim-error-markers-doxygen.png.
