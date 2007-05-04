@@ -15,6 +15,10 @@
 "               directory and be automatically sourced. If not, you must
 "               manually source this file using ':source errormarker.vim'.
 
+" === Support for automatic retrieval (VIM script 642) ==================={{{1
+
+" GetLatestVimScripts: 1861 1 :AutoInstall: errormarker.vim
+
 " === Initialization ====================================================={{{1
 
 " Exit when the VIM version is missing some features
@@ -29,7 +33,7 @@ if exists("g:loaded_errormarker") || &compatible
 endif
 
 " Version number.
-let g:loaded_errormarker = "0.1.5"
+let g:loaded_errormarker = "0.1.6"
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -331,6 +335,7 @@ Author: Michael Hofmann <mh21 at piware dot de>
 ==============================================================================
 4. CHANGELOG                                           *errormarker-changelog*
 
+0.1.6   - support for GetLatestVimScripts (vimscript#642)
 0.1.5   - clarified documentation about paths
 0.1.4   - fixes icon name and variable escaping
 0.1.3   - customizable signs
