@@ -33,7 +33,7 @@ if exists("g:loaded_errormarker") || &compatible
 endif
 
 " Version number.
-let g:loaded_errormarker = "0.1.6"
+let g:loaded_errormarker = "0.1.7"
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -322,6 +322,7 @@ For example, the severity of error messages from gcc
         averagergui.cpp|33 error| expected class-name before ‘I’ ~
 can be parsed by adding the following lines to your .vimrc >
         let &errorformat="%f:%l: %t%*[^:]:%m," . &errorformat
+        let &errorformat="%f:%l:%c: %t%*[^:]:%m," . &errorformat
         let errormarker_warningtypes = "wW"
 
 If you use a different locale than English, this may be also needed: >
@@ -335,6 +336,7 @@ Author: Michael Hofmann <mh21 at piware dot de>
 ==============================================================================
 4. CHANGELOG                                           *errormarker-changelog*
 
+0.1.7   - fixes gcc error message parsing example
 0.1.6   - support for GetLatestVimScripts (vimscript#642)
 0.1.5   - clarified documentation about paths
 0.1.4   - fixes icon name and variable escaping
