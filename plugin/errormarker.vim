@@ -15,14 +15,14 @@
 "               directory and be automatically sourced. If not, you must
 "               manually source this file using ':source errormarker.vim'.
 
-" === Support for automatic retrieval (VIM script 642) ==================={{{1
+" === Support for automatic retrieval (Vim script 642) ==================={{{1
 
 " GetLatestVimScripts: 1861 1 :AutoInstall: errormarker.vim
 
 " === Initialization ====================================================={{{1
 
-" Exit when the VIM version is missing some features
-if !has ("signs") || !has ("autocmd")
+" Exit when the Vim version is too old or missing some features
+if v:version < 700 || !has ("signs") || !has ("autocmd")
     finish
 endif
 
@@ -33,7 +33,7 @@ if exists("g:loaded_errormarker") || &compatible
 endif
 
 " Version number.
-let g:loaded_errormarker = "0.1.7"
+let g:loaded_errormarker = "0.1.8"
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -222,7 +222,7 @@ function! s:InstallDocumentation(full_name, revision)
     /^=\{3,}\s\+END_DOC\C/,$ d
 
     " Add modeline for help doc: the modeline string is mangled intentionally
-    " to avoid it be recognized by VIM:
+    " to avoid it be recognized by Vim:
     call append(line('$'), '')
     call append(line('$'), ' v' . 'im:tw=78:ts=8:ft=help:norl:')
 
@@ -259,14 +259,14 @@ finish
 3. Credits                                               |errormarker-credits|
 4. Changelog                                           |errormarker-changelog|
 
-This plugin is only available if VIM was compiled with the |+signs| feature
+This plugin is only available if Vim was compiled with the |+signs| feature
 and 'compatible' is not set.
 
 ==============================================================================
 1. USAGE                                                   *errormarker-usage*
 
 This plugin hooks the quickfix command |QuickFixCmdPost| and generates error
-markers for every line that contains an error. VIM has to be compiled with
+markers for every line that contains an error. Vim has to be compiled with
 |+signs| for this to work.
 
 Additionally, a tooltip with the error message is shown when you hover with
@@ -274,7 +274,7 @@ the mouse over a line with an error (only available when compiled with the
 |+balloon_eval| feature).
 
 The functionality mentioned here is a plugin, see |add-plugin|. This plugin is
-only available if 'compatible' is not set and VIM was compiled with |+signs|
+only available if 'compatible' is not set and Vim was compiled with |+signs|
 support. You can avoid loading this plugin by setting the "loaded_errormarker"
 variable in your |vimrc| file: >
         :let loaded_errormarker = 1
@@ -282,12 +282,12 @@ variable in your |vimrc| file: >
 ==============================================================================
 2. CUSTOMIZATION                                   *errormarker-customization*
 
-You can customize the signs that are used by VIM to mark warnings and errors
+You can customize the signs that are used by Vim to mark warnings and errors
 (see |:sign-define| for details).
 
                              *errormarker_erroricon* *errormarker_warningicon*
 The icons that are used for the warnings and error signs in the GUI version of
-VIM can be set by >
+Vim can be set by >
         :let errormarker_erroricon = "/path/to/error/icon/name.png"
         :let errormarker_warningicon = "/path/to/warning/icon/name.png"
 If an icon is not found, text-only markers are displayed instead. The bitmap
@@ -312,7 +312,7 @@ and errors can be set by >
 <
                                                     *errormarker_warningtypes*
 If the compiler reports a severity for the error messages this can be used to
-distinguish between warnings and errors. VIM uses a single character error
+distinguish between warnings and errors. Vim uses a single character error
 type that can be parsed with |errorformat| (%t). The error types that should
 be treated as warnings can be set by >
         let errormarker_warningtypes = "wWiI"
@@ -336,6 +336,7 @@ Author: Michael Hofmann <mh21 at piware dot de>
 ==============================================================================
 4. CHANGELOG                                           *errormarker-changelog*
 
+0.1.8   - check for Vim version
 0.1.7   - fixes gcc error message parsing example
 0.1.6   - support for GetLatestVimScripts (vimscript#642)
 0.1.5   - clarified documentation about paths
@@ -344,7 +345,7 @@ Author: Michael Hofmann <mh21 at piware dot de>
         - distinguishes between warnings and errors
 0.1.2   - documentation
 0.1.1   - handles nonexistent icons gracefully
-        - tooltips only used if vim has balloon-eval support
+        - tooltips only used if Vim has balloon-eval support
 0.1     - initial release
 
 ==============================================================================
