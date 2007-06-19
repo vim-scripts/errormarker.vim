@@ -33,7 +33,7 @@ if exists("g:loaded_errormarker") || &compatible
 endif
 
 " Version number.
-let g:loaded_errormarker = "0.1.8"
+let g:loaded_errormarker = "0.1.9"
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -48,10 +48,12 @@ endfunction
 
 " Defines the icon to show for errors in the gui
 call s:DefineVariable ("g:errormarker_erroricon",
+            \ has('win32') ? expand ("~/vimfiles/icons/error.bmp") :
                 \ "/usr/share/icons/gnome/16x16/status/dialog-error.png")
 
 " Defines the icon to show for warnings in the gui
 call s:DefineVariable ("g:errormarker_warningicon",
+            \ has('win32') ? expand ("~/vimfiles/icons/warning.bmp") :
                 \ "/usr/share/icons/gnome/16x16/status/dialog-warning.png")
 
 " Defines the text (two characters) to show for errors in the gui
@@ -101,20 +103,28 @@ function! s:SetErrorMarkers()
 
     sign unplace *
 
-    let l:i = 1
+    let l:positions = {}
     for l:d in getqflist()
         if (l:d.bufnr == 0 || l:d.lnum == 0)
             continue
         endif
+
+        " VIM on Win32 shows arrows on icons if we define more than one marker at
+        " the same position???
+        let l:key = l:d.bufnr . l:d.lnum
+        if has_key (l:positions, l:key)
+            continue
+        endif
+        let l:positions[l:key] = 1
+
         if strlen (l:d.type) &&
                     \ stridx (g:errormarker_warningtypes, l:d.type) >= 0
             let l:name = "errormarker_warning"
         else
             let l:name = "errormarker_error"
         endif
-        execute ":sign place " . l:i . " line=" . l:d.lnum . " name=" .
+        execute ":sign place " . l:key . " line=" . l:d.lnum . " name=" .
                     \ l:name . " buffer=" . l:d.bufnr
-        let l:i = l:i + 1
     endfor
 endfunction
 
@@ -296,7 +306,11 @@ should fit into the place of two characters.
 You must use full paths for these variables, for icons in your home directory
 expand the paths in your .vimrc with something like >
         :let errormarker_erroricon = expand ("~/.vim/icons/error.png")
-<
+To get working icons on Microsoft Windows, place icons for errors and warnings
+(you can use Google at http://images.google.com/images?q=error&imgsz=icon to
+find some nice ones) as error.bmp and warning.bmp in your home directory at
+C:\Documents and Settings\<user>\vimfiles\icons.
+
                              *errormarker_errortext* *errormarker_warningtext*
 The text that is displayed without a GUI or if the icon files can not be found
 can be set by >
@@ -336,6 +350,7 @@ Author: Michael Hofmann <mh21 at piware dot de>
 ==============================================================================
 4. CHANGELOG                                           *errormarker-changelog*
 
+0.1.9   - fixes Win32 icon display
 0.1.8   - check for Vim version
 0.1.7   - fixes gcc error message parsing example
 0.1.6   - support for GetLatestVimScripts (vimscript#642)
