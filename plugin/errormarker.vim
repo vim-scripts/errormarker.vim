@@ -33,7 +33,7 @@ if exists("g:loaded_errormarker") || &compatible
 endif
 
 " Version number.
-let g:loaded_errormarker = "0.1.9"
+let g:loaded_errormarker = "0.1.10"
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -109,8 +109,6 @@ function! s:SetErrorMarkers()
             continue
         endif
 
-        " VIM on Win32 shows arrows on icons if we define more than one marker at
-        " the same position???
         let l:key = l:d.bufnr . l:d.lnum
         if has_key (l:positions, l:key)
             continue
@@ -143,7 +141,7 @@ endfunction
 
 " === Help file installation ============================================={{{1
 
-" Copyright (C) Mathieu Clabaut, author of vimspell
+" Original version: Copyright (C) Mathieu Clabaut, author of vimspell
 " http://www.vim.org/scripts/script.php?script_id=465
 function! s:InstallDocumentation(full_name, revision)
     " Name of the document path based on the system we use:
@@ -169,8 +167,7 @@ function! s:InstallDocumentation(full_name, revision)
     let l:vim_plugin_path = fnamemodify(a:full_name, ':h')
     let l:vim_doc_path    = fnamemodify(a:full_name, ':h:h') . l:doc_path
     if (!(filewritable(l:vim_doc_path) == 2))
-        "Doc path: " . l:vim_doc_path
-        call s:NerdEcho("Doc path: " . l:vim_doc_path, 0)
+        echo "Creating doc path: " . l:vim_doc_path
         execute l:mkdir_cmd . '"' . l:vim_doc_path . '"'
         if (!(filewritable(l:vim_doc_path) == 2))
             " Try a default configuration in user home:
@@ -178,9 +175,9 @@ function! s:InstallDocumentation(full_name, revision)
             if (!(filewritable(l:vim_doc_path) == 2))
                 execute l:mkdir_cmd . '"' . l:vim_doc_path . '"'
                 if (!(filewritable(l:vim_doc_path) == 2))
-                    " Put a warning:
-                    call s:NerdEcho("Unable to open documentation directory \ntype :help add-local-help for more information.", 0)
-                    echo l:vim_doc_path
+                    echohl WarningMsg
+                    echo "Unable to create documentation directory.\ntype :help add-local-help for more information."
+                    echohl None
                     return 0
                 endif
             endif
@@ -213,7 +210,7 @@ function! s:InstallDocumentation(full_name, revision)
     " Create a new buffer & read in the plugin file (me):
     setl nomodeline
     exe 'enew!'
-    exe 'r ' . l:plugin_file
+    silent exe 'r ' . l:plugin_file
 
     setl modeline
     let l:buf = bufnr("%")
@@ -224,12 +221,12 @@ function! s:InstallDocumentation(full_name, revision)
 
     " Delete from first line to a line starts with
     " === START_DOC
-    1,/^=\{3,}\s\+START_DOC\C/ d
+    silent 1,/^=\{3,}\s\+START_DOC\C/ d
 
     " Delete from a line starts with
     " === END_DOC
     " to the end of the documents:
-    /^=\{3,}\s\+END_DOC\C/,$ d
+    silent /^=\{3,}\s\+END_DOC\C/,$ d
 
     " Add modeline for help doc: the modeline string is mangled intentionally
     " to avoid it be recognized by Vim:
@@ -237,10 +234,10 @@ function! s:InstallDocumentation(full_name, revision)
     call append(line('$'), ' v' . 'im:tw=78:ts=8:ft=help:norl:')
 
     " Replace revision:
-    exe "normal :1s/#version#/ v" . a:revision . "/\<CR>"
+    silent exe "normal :1s/#version#/ v" . a:revision . "/\<CR>"
 
     " Save the help document:
-    exe 'w! ' . l:doc_file
+    silent exe 'w! ' . l:doc_file
     exe l:go_back
     exe 'bw ' . l:buf
 
@@ -250,7 +247,7 @@ function! s:InstallDocumentation(full_name, revision)
     return 1
 endfunction
 
-silent call s:InstallDocumentation(expand('<sfile>:p'), g:loaded_errormarker)
+call s:InstallDocumentation(expand('<sfile>:p'), g:loaded_errormarker)
 
 " === Cleanup ============================================================{{{1
 
@@ -350,6 +347,7 @@ Author: Michael Hofmann <mh21 at piware dot de>
 ==============================================================================
 4. CHANGELOG                                           *errormarker-changelog*
 
+0.1.9   - removes accidental dependency on NerdEcho
 0.1.9   - fixes Win32 icon display
 0.1.8   - check for Vim version
 0.1.7   - fixes gcc error message parsing example
