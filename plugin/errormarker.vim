@@ -33,7 +33,7 @@ if exists("g:loaded_errormarker") || &compatible
 endif
 
 " Version number.
-let g:loaded_errormarker = "0.1.10"
+let g:loaded_errormarker = "0.1.11"
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -347,7 +347,8 @@ Author: Michael Hofmann <mh21 at piware dot de>
 ==============================================================================
 4. CHANGELOG                                           *errormarker-changelog*
 
-0.1.9   - removes accidental dependency on NerdEcho
+0.1.11  - changelog fix
+0.1.10  - removes accidental dependency on NerdEcho
 0.1.9   - fixes Win32 icon display
 0.1.8   - check for Vim version
 0.1.7   - fixes gcc error message parsing example
