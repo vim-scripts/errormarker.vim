@@ -1,5 +1,5 @@
 " ============================================================================
-"    Copyright: Copyright (C) 2007 Michael Hofmann
+"    Copyright: Copyright (C) 2007,2010 Michael Hofmann
 "               Permission is hereby granted to use and distribute this code,
 "               with or without modifications, provided that this copyright
 "               notice is copied with it. Like anything else that's free,
@@ -33,10 +33,13 @@ if exists("g:loaded_errormarker") || &compatible
 endif
 
 " Version number.
-let g:loaded_errormarker = "0.1.11"
+let g:loaded_errormarker = "0.1.12"
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+command ErrorAtCursor call ShowErrorAtCursor()
+nmap <silent> <unique> <Leader>cc :ErrorAtCursor<CR>
 
 function! s:DefineVariable (name, default)
     if !exists (a:name)
@@ -94,6 +97,18 @@ augroup errormarker
 augroup END
 
 " === Functions =========================================================={{{1
+
+function! ShowErrorAtCursor()
+    let [l:bufnr, l:lnum] = getpos(".")[0:1]
+    let l:bufnr = bufnr("%")
+    for l:d in getqflist()
+        if (l:d.bufnr != l:bufnr || l:d.lnum != l:lnum)
+            continue
+        endif
+        redraw | echomsg l:d.text
+    endfor
+    echo
+endfunction
 
 function! s:SetErrorMarkers()
     if has ('balloon_eval')
@@ -278,12 +293,13 @@ markers for every line that contains an error. Vim has to be compiled with
 
 Additionally, a tooltip with the error message is shown when you hover with
 the mouse over a line with an error (only available when compiled with the
-|+balloon_eval| feature).
+|+balloon_eval| feature), or when you press <Leader>cc in normal mode. This
+functionality is also available with the |:ErrorAtCursor| command.
 
 The functionality mentioned here is a plugin, see |add-plugin|. This plugin is
 only available if 'compatible' is not set and Vim was compiled with |+signs|
-support. You can avoid loading this plugin by setting the "loaded_errormarker"
-variable in your |vimrc| file: >
+and |+autocmd| support. You can avoid loading this plugin by setting the
+"loaded_errormarker" variable in your |vimrc| file: >
         :let loaded_errormarker = 1
 
 ==============================================================================
@@ -336,8 +352,16 @@ can be parsed by adding the following lines to your .vimrc >
         let &errorformat="%f:%l:%c: %t%*[^:]:%m," . &errorformat
         let errormarker_warningtypes = "wW"
 
-If you use a different locale than English, this may be also needed: >
+If you use a different locale than English, this may also be needed: >
         set makeprg=LANGUAGE=C\ make
+<
+                                                        *\cc* *:ErrorAtCursor*
+To show the error message at the cursor position (e.g. if you are working from
+within a terminal, where tooltips are not available), the following command
+and shortcut are defined: >
+        :ErrorAtCursor
+        :nmap <silent> <unique> <Leader>cc :ErrorAtCursor<CR>
+<
 
 ==============================================================================
 3. CREDITS                                               *errormarker-credits*
@@ -347,6 +371,7 @@ Author: Michael Hofmann <mh21 at piware dot de>
 ==============================================================================
 4. CHANGELOG                                           *errormarker-changelog*
 
+0.1.12  - shortcut (<Leader>cc) to show error at cursor (thanks Eric Rannaud)
 0.1.11  - changelog fix
 0.1.10  - removes accidental dependency on NerdEcho
 0.1.9   - fixes Win32 icon display
